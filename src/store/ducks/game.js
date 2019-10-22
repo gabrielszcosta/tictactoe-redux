@@ -2,9 +2,11 @@
  * TYPES
  */
 export const Types = {
-  SET_HISTORY: 'game/SET_HISTORY',
+  SET_NEW_HISTORY: 'game/SET_NEW_HISTORY',
   SET_CURRENT: 'game/SET_CURRENT',
+  SET_STATUS: 'game/SET_STATUS',
   CALCULATE_WINNER: 'game/CALCULATE_WINNER',
+  JUMP_TO: 'game/JUMP_TO',
 };
 
 /**
@@ -15,10 +17,11 @@ const INITIAL_STATE = {
   history: [{squares: Array(9).fill(null)}],
   newHistory: [],
   stepNumber: 0,
-  xIsNext: true,
+  xIsNext: 'X',
   current: [],
   squares: [],
-  winner: null
+  winner: null,
+  status: ''
 };
 
 export default function game(state = INITIAL_STATE, action) {
@@ -30,7 +33,7 @@ export default function game(state = INITIAL_STATE, action) {
 
       return { ...state, current, squares, newHistory };
 
-    case Types.SET_HISTORY:
+    case Types.SET_NEW_HISTORY:
       const newSquares = state.squares;
       newSquares[action.payload.square] = state.xIsNext ? 'X' : 'O';
       
@@ -42,6 +45,19 @@ export default function game(state = INITIAL_STATE, action) {
         xIsNext: !state.xIsNext
       };
 
+    case Types.SET_STATUS:
+      if (state.winner) {
+        return { 
+          ...state, 
+          status: 'Winner: ' + state.winner
+        };
+      } else {
+        return { 
+          ...state, 
+          status: 'Next player: ' + (state.xIsNext ? 'X' : 'O')
+        };
+      }
+        
     case Types.CALCULATE_WINNER:
       for (let i = 0; i < state.lines.length; i++) {
         const [a, b, c] = state.lines[i];
@@ -50,6 +66,13 @@ export default function game(state = INITIAL_STATE, action) {
         }
       }
       return state;
+
+    case Types.JUMP_TO:
+      return {
+        ...state, 
+        stepNumber: action.payload.move,
+        xIsNext: action.payload.move % 2 === 0,
+      };
 
     default:
       return state;
@@ -60,8 +83,8 @@ export default function game(state = INITIAL_STATE, action) {
  * ACTIONS
  */
 export const Creators = {
-  setHistory: (square) => ({
-    type: Types.SET_HISTORY,
+  setNewHistory: (square) => ({
+    type: Types.SET_NEW_HISTORY,
     payload: { square },
   }),
 
@@ -69,8 +92,17 @@ export const Creators = {
     type: Types.SET_CURRENT
   }),
 
+  setStatus: () => ({
+    type: Types.SET_STATUS
+  }),
+
   calculateWinner: () => ({
     type: Types.CALCULATE_WINNER
+  }),
+
+  jumpTo: (move) => ({
+    type: Types.JUMP_TO,
+    payload: { move },
   })
   
 };

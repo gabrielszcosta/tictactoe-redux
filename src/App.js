@@ -7,10 +7,9 @@ import store from './store';
 import Game from './views/Game'
 
 export default function App() {
-	// return(<Game/>)
 	return (
 		<Provider store={store}>
-			<Game/>
+			<Game />
 		</Provider>
 	);
 }
