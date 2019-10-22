@@ -1,4 +1,4 @@
 import { combineReducers } from 'redux';
-import favorites from './favorites';
+import game from './game';
 
-export default combineReducers({ favorites });
+export default combineReducers({ game });
