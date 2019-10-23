@@ -1,10 +1,17 @@
 import React from 'react';
 
+/**
+ * Importação do components que compõe a board do jogo
+ */
 import Square from '../Square'
 
-export default function Board ({squares, onClick}) {
-	function renderSquare(i) {
-		return <Square value={squares[i]} onClick={() => onClick(i)} />;
+export default function Board ({ squares }) {
+
+    /**
+     * Função que renderiza cada quadrado do board do jogo atribuindo o seu respectivo índice e o valor que será exibido no quadrado
+     */
+	function renderSquare(index) {
+		return <Square value={ squares[index] } index={ index } />;
 	}
 
 	return(
@@ -26,5 +33,4 @@ export default function Board ({squares, onClick}) {
             </div>
         </div>
     );
-
 }

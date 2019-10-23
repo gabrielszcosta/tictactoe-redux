@@ -26,6 +26,9 @@ const INITIAL_STATE = {
 
 export default function game(state = INITIAL_STATE, action) {
   switch (action.type) {
+    /**
+     * Cria um estado atual
+     */
     case Types.SET_CURRENT:
       const newHistory = state.history.slice(0, state.stepNumber + 1);
       const current = newHistory[newHistory.length - 1];
@@ -33,31 +36,40 @@ export default function game(state = INITIAL_STATE, action) {
 
       return { ...state, current, squares, newHistory };
 
+    /**
+     * Atualiza o histórico
+     */
     case Types.SET_NEW_HISTORY:
       const newSquares = state.squares;
       newSquares[action.payload.square] = state.xIsNext ? 'X' : 'O';
-      
-      return { 
-        ...state, 
+
+      return {
+        ...state,
         squares: newSquares,
         history: state.newHistory.concat([{squares: newSquares}]),
         stepNumber: state.newHistory.length,
         xIsNext: !state.xIsNext
       };
 
+    /**
+     * Atualiza o status do jogo
+     */
     case Types.SET_STATUS:
       if (state.winner) {
-        return { 
-          ...state, 
-          status: 'Winner: ' + state.winner
+        return {
+          ...state,
+          status: 'Vencedor: ' + state.winner
         };
       } else {
-        return { 
-          ...state, 
-          status: 'Next player: ' + (state.xIsNext ? 'X' : 'O')
+        return {
+          ...state,
+          status: 'Próximo jogador: ' + (state.xIsNext ? 'X' : 'O')
         };
       }
-        
+
+    /**
+     * Verifica se houve vencedor
+     */
     case Types.CALCULATE_WINNER:
       for (let i = 0; i < state.lines.length; i++) {
         const [a, b, c] = state.lines[i];
@@ -67,9 +79,12 @@ export default function game(state = INITIAL_STATE, action) {
       }
       return state;
 
+    /**
+     * Navega no histórico de jogadas
+     */
     case Types.JUMP_TO:
       return {
-        ...state, 
+        ...state,
         stepNumber: action.payload.move,
         xIsNext: action.payload.move % 2 === 0,
       };
@@ -83,26 +98,42 @@ export default function game(state = INITIAL_STATE, action) {
  * ACTIONS
  */
 export const Creators = {
-  setNewHistory: (square) => ({
-    type: Types.SET_NEW_HISTORY,
-    payload: { square },
-  }),
+    /**
+     * Função que dispara a action que atualiza o historico de jogadas
+     * @param Int square: índice do quadrado clicado
+     */
+    setNewHistory: (square) => ({
+        type: Types.SET_NEW_HISTORY,
+        payload: { square },
+    }),
 
-  setCurrent: () => ({
-    type: Types.SET_CURRENT
-  }),
+    /**
+     * Função que dispara a action que cria um estado atual no jogo
+     */
+    setCurrent: () => ({
+        type: Types.SET_CURRENT
+    }),
 
-  setStatus: () => ({
-    type: Types.SET_STATUS
-  }),
+    /**
+     * Função que dispara a action que atualiza o status
+     */
+    setStatus: () => ({
+        type: Types.SET_STATUS
+    }),
 
-  calculateWinner: () => ({
-    type: Types.CALCULATE_WINNER
-  }),
+    /**
+     * Função que dispara a action que calcula o vencedor
+     */
+    calculateWinner: () => ({
+        type: Types.CALCULATE_WINNER
+    }),
 
-  jumpTo: (move) => ({
-    type: Types.JUMP_TO,
-    payload: { move },
-  })
-  
+    /**
+     * Função que dispara a action que navega no historico
+     * @param Int move: índice do histórico selecionado
+     */
+    jumpTo: (move) => ({
+        type: Types.JUMP_TO,
+        payload: { move },
+    })
 };
